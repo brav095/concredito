@@ -16,7 +16,7 @@ steps:
 - task: NodeTool@0
   inputs:
     versionSpec: '10.x'
-    app_location: '/src'
+    app_location: '/'
     output_location: '/dist'
     azure_static_web_apps_api_token: $(deployment_token)
   displayName: 'Install Node.js'
