@@ -4,9 +4,9 @@ import { Response} from "@/viewModels/respuesta"
 
 export class WS {
   // base_url: string = "http://localhost:5000/Prospectos";
-  base_url: string = "https://wsconcredito.azurewebsites.net/Prospectos";
+  base_url= "https://wsconcredito.azurewebsites.net/Prospectos";
   constructor() {
-    console.log("Servicio");
+    // console.log("Servicio");
   }
 
   async consProspectos(): Promise<Array<ProspectoR>> {
@@ -25,7 +25,7 @@ export class WS {
     nPros.telefono = nPros.telefono.toString();
     nPros.cp = nPros.cp.toString();
 
-    var myHeaders = new Headers();
+    let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     const response = await fetch(this.base_url, {
       method: "POST",
@@ -37,7 +37,7 @@ export class WS {
       .then((result) => result)
       .catch((error) => console.log("error", error));
 
-      console.log(response);
+      // console.log(response);
       return response;
   }
 }
