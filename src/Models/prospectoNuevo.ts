@@ -3,7 +3,7 @@ export interface ProspectoN{
     apellidoM:String,
     apellidoP:String,
     calle:string,
-    numero:number,
+    numero:number|unknown,
     colonia:string,
     cp:string,
     telefono:string,

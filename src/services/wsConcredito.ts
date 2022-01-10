@@ -1,9 +1,10 @@
 import { ProspectoR } from "@/Models/prospectoResponse";
 import { ProspectoN } from "@/Models/prospectoNuevo";
-import axios from "axios";
+import { Response} from "@/viewModels/respuesta"
 
 export class WS {
-  base_url: string = "http://localhost:5000/Prospectos";
+  // base_url: string = "http://localhost:5000/Prospectos";
+  base_url: string = "https://wsconcredito.azurewebsites.net/Prospectos";
   constructor() {
     console.log("Servicio");
   }
@@ -20,32 +21,23 @@ export class WS {
     }
   }
 
-  async newProspecto(nPros: ProspectoN): Promise<void> {
-    console.log(nPros);
-    // nPros={
-    //   nombre: "string",
-    //   apellidoP: "string",
-    //   apellidoM: "string",
-    //   calle: "string",
-    //   cp: "string",
-    //   telefono: "string",
-    //   rfc: "string2",
-    //   numero: 0,
-    //   colonia: "string"
-    // }
-
+  async newProspecto(nPros: ProspectoN): Promise<Response> {
     nPros.telefono = nPros.telefono.toString();
-    console.log(JSON.stringify(nPros));
+    nPros.cp = nPros.cp.toString();
+
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     const response = await fetch(this.base_url, {
       method: "POST",
       headers: myHeaders,
-      body: JSON.stringify( nPros),
+      body: JSON.stringify(nPros),
       redirect: "follow",
     })
-      .then((response) => response.text())
-      .then((result) => console.log(result))
+      .then((response) => JSON.parse(response.text().toString()))
+      .then((result) => result)
       .catch((error) => console.log("error", error));
+
+      console.log(response);
+      return response;
   }
 }

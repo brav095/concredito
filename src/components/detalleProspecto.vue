@@ -7,11 +7,11 @@
       transition="dialog-bottom-transition"
     >
       <v-card tile>
-        <v-toolbar flat dark color="primary">
+        <v-toolbar flat dark>
           <v-btn icon dark @click="cancelar()">
             <i class="fas fa-times fa-2x"></i>
           </v-btn>
-          <v-toolbar-title>{{ frmProspecto.nombre }}</v-toolbar-title>
+          <v-toolbar-title>{{ frmProspecto.nombre.toUpperCase() }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-btn dark text @click="dialog = false"> Guardar </v-btn>
@@ -164,12 +164,12 @@ export default Vue.extend({
   },
   data: () => ({
     mostra: true as boolean,
-    archivos: [] as Array<any>,
+    archivos: [] as Array<unknown>,
     estados: [
       { value: 1, label: "Enviado" },
       { value: 2, label: "Aceptado" },
       { value: 3, label: "Rechazado" },
-    ] as Array<any>,
+    ] as Array<unknown>,
     frmProspecto: {
       idProspecto: 0,
       nombre: "",
@@ -196,7 +196,7 @@ export default Vue.extend({
       console.log(this.frmProspecto);
     },
     addArchivo(): void {
-      this.archivos.unshift({ nombre: "" as string, arch: null as string | any});
+      this.archivos.unshift({ nombre: "" as string, arch: null as unknown});
       console.log(this.archivos);
     },
   },

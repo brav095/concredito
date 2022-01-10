@@ -1,5 +1,6 @@
 <template>
   <div>
+    
     <v-card>
       <v-card-title>
         <v-text-field
@@ -15,6 +16,8 @@
         :items="prospectos"
         :search="search"
         @click:row="prueba"
+        :loading="load"
+        loading-text="Cargando..."
       >
         <template v-slot:item.estado="{ item }">
           <v-chip
@@ -46,7 +49,7 @@
 import Vue from "vue";
 // import { vmProspecto } from "../viewModels/vmProspecto";
 import { ProspectoR } from "../Models/prospectoResponse";
-import {WS} from "../services/wsConcredito";
+import { WS } from "../services/wsConcredito";
 import detalleProspecto from "./detalleProspecto.vue";
 export default Vue.extend({
   components: {
@@ -56,6 +59,7 @@ export default Vue.extend({
 
   data: () => ({
     mostrarDetalle: false as boolean,
+    load: false as boolean,
     search: "" as string,
     Titulos: [
       {
@@ -83,15 +87,15 @@ export default Vue.extend({
   }),
   methods: {
     prueba(row: ProspectoR): void {
-      console.log(row);
       this.mostrarDetalle = true;
       this.prospectoSelect = row;
     },
   },
   async mounted() {
+    this.load = true;
     const repo = new WS();
-
     this.prospectos = await repo.consProspectos();
+    this.load = false;
   },
 });
 </script>

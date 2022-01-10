@@ -1,43 +1,39 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
+    <v-app-bar app dark>
       <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
 
         <v-img
           alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
+          class="shrink mt-1 "
           contain
           min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
+          src="https://i0.wp.com/estoesculiacan.com/wp-content/uploads/2019/07/concredito-logo.png?w=701&ssl=1"
           width="100"
         />
       </div>
 
       <v-spacer></v-spacer>
       <v-btn @click="nuevoProspecto()" icon>
-        <i class="fas fa-user-plus"></i>
+        <i class="fas fa-user-plus fa-2x"></i>
       </v-btn>
-      <!-- <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>fa-external-link</v-icon>
-      </v-btn> -->
     </v-app-bar>
 
     <v-main>
-      <Registro v-if="nuevoRegistro" @cancelar="cancelar()"></Registro>
-
+      <Registro
+        v-if="nuevoRegistro"
+        @cancelar="cancelar()"
+        @cerrar="guardador()"
+      ></Registro>
+      <v-alert v-model="alertCorrecto" dismissible type="success">{{
+        mensajeAlert
+      }}</v-alert>
+      <v-alert v-model="alertError" dismissible type="error">
+        {{ mensajeAlert }}
+      </v-alert>
+      <v-alert v-model="alertAviso" dismissible type="warning">
+        {{ mensajeAlert }}
+      </v-alert>
       <prospectos></prospectos>
     </v-main>
   </v-app>
@@ -57,7 +53,11 @@ export default Vue.extend({
   },
 
   data: () => ({
-    nuevoRegistro:false as boolean,
+    nuevoRegistro: false as boolean,
+    mensajeAlert: "" as string,
+    alertCorrecto: false as boolean,
+    alertError: false as boolean,
+    alertAviso: false as boolean,
   }),
   methods: {
     nuevoProspecto(): void {
@@ -65,7 +65,12 @@ export default Vue.extend({
     },
     cancelar(): void {
       this.nuevoRegistro = false;
-    }
+    },
+    guardado(): void {
+      this.nuevoRegistro = false;
+      this.mensajeAlert = "Registro guardado correctamente";
+      this.alertCorrecto = true;
+    },
   },
 });
 </script>

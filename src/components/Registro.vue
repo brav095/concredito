@@ -5,7 +5,7 @@
         <v-card-title> Nuevo prospecto </v-card-title>
 
         <v-form>
-          <div style="padding-left:40px; padding-right:40px ">
+          <div style="padding-left: 40px; padding-right: 40px">
             <v-row>
               <v-col cols="12" sm="6" md="6">
                 <v-text-field
@@ -96,10 +96,33 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="cancelar()"> Cancelar </v-btn>
+          <v-btn color="primary" text @click="cancelar()"> Cancelar</v-btn>
           <v-btn color="primary" text @click="guardar()"> Enviar </v-btn>
         </v-card-actions>
       </v-card>
+      <v-row justify="center">
+        <v-dialog v-model="dialog" persistent max-width="290">
+          <v-card>
+            <v-card-title class="text-h5">
+              Aviso
+            </v-card-title>
+            <v-card-text
+              >
+              No se guardarán los cambios ¿Desea salir?
+              </v-card-text
+            >
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="dark darken-1" text @click="dialog = false">
+                NO
+              </v-btn>
+              <v-btn color="dark darken-1" text @click="cerrar()">
+                SÍ
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-row>
     </v-dialog>
   </div>
 </template>
@@ -107,32 +130,66 @@
 <script lang="ts">
 import Vue from "vue";
 import { ProspectoN } from "../Models/prospectoNuevo";
-import {WS} from "../services/wsConcredito";
+import { WS } from "../services/wsConcredito";
 
 export default Vue.extend({
   name: "Registro",
   data: () => ({
     mostrar: true as boolean,
+    dialog: false as boolean,
     frmProspecto: {
       nombre: "",
       apellidoM: "",
       apellidoP: "",
       calle: "",
-      numero: 0,
+      numero: null,
       colonia: "",
-      cp: '',
-      telefono: '',
+      cp: "",
+      telefono: "",
       rfc: "",
     } as ProspectoN,
   }),
   methods: {
     cancelar(): void {
-      this.$emit("cancelar");
+      if (this.alertGuardar) {
+        this.dialog = true;
+      } else {
+        this.$emit("cancelar");
+      }
     },
     async guardar(): Promise<void> {
       const repo = new WS();
-      await repo.newProspecto(this.frmProspecto);
-      console.log(JSON.stringify( this.frmProspecto));
+      const response = await repo.newProspecto(this.frmProspecto);
+      console.log(response);
+      if (response.exito == 1) {
+        this.$emit("cerrar");
+      }
+    },
+    cerrar(): void {
+      this.$emit("cancelar")
+    }
+  },
+  computed: {
+    alertGuardar(): boolean {
+      return this.frmProspecto.nombre.length > 0
+        ? true
+        : this.frmProspecto.apellidoP.length > 0
+        ? true
+        : this.frmProspecto.apellidoM.length > 0
+        ? true
+        : this.frmProspecto.calle.length > 0
+        ? true
+        : this.frmProspecto.numero !== null
+        ? true
+        : this.frmProspecto.colonia.length > 0
+        ? true
+        : this.frmProspecto.cp.length > 0
+        ? true
+        : this.frmProspecto.telefono.length > 0
+        ? true
+        : this.frmProspecto.rfc.length > 0
+        ? true
+        : false;
     },
   },
 });
