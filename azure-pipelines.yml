@@ -17,10 +17,10 @@ steps:
   inputs:
     versionSpec: '10.x'
     app_location: '/'
-    output_location: '/dist'
+    output_location: './dist'
     azure_static_web_apps_api_token: $(deployment_token)
   displayName: 'Install Node.js'
 - script: |
     npm install
-    npm run serve
+    npm run build
   displayName: 'npm install and build'
