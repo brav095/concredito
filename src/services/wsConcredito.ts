@@ -25,7 +25,7 @@ export class WS {
     nPros.telefono = nPros.telefono.toString();
     nPros.cp = nPros.cp.toString();
 
-    let myHeaders = new Headers();
+    const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     const response = await fetch(this.base_url, {
       method: "POST",
@@ -35,7 +35,7 @@ export class WS {
     })
       .then((response) => JSON.parse(response.text().toString()))
       .then((result) => result)
-      .catch((error) => console.log("error", error));
+      .catch((error) => error);
 
       // console.log(response);
       return response;
