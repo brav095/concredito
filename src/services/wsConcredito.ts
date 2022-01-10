@@ -36,7 +36,6 @@ export class WS {
       .then((response) => JSON.parse(response.text().toString()))
       .then((result) => result)
       .catch((error) => error);
-
       // console.log(response);
       return response;
   }
