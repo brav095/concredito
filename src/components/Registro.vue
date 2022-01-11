@@ -196,7 +196,8 @@ export default Vue.extend({
     async guardar(): Promise<void> {
       const repo = new WS();
       const response = await repo.newProspecto(this.frmProspecto);
-      let res = response as Response;
+      console.log(response);
+      let res = JSON.parse(response) as Response;
       // console.log(JSON.parse( response));
       if (res.exito == 1) {
         this.$emit("cerrar");

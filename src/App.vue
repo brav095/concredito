@@ -23,7 +23,7 @@
       <Registro
         v-if="nuevoRegistro"
         @cancelar="cancelar()"
-        @cerrar="guardador()"
+        @cerrar="guardado()"
       ></Registro>
       <v-alert v-model="alertCorrecto" dismissible type="success">{{
         mensajeAlert

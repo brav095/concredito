@@ -21,7 +21,7 @@ export class WS {
     }
   }
 
-  async newProspecto(nPros: ProspectoN): Promise<Response> {
+  async newProspecto(nPros: ProspectoN): Promise<string> {
     // nPros.telefono = nPros.telefono.toString();
     nPros.cp = nPros.cp.toString();
     console.log(nPros);
@@ -34,10 +34,9 @@ export class WS {
       body: JSON.stringify(nPros),
       redirect: "follow",
     })
-      .then((response) => response)
+      .then((response) => response.text())
       .then((result) => result)
       .catch((error) => error);
-      // console.log(response);
       return response;
   }
 }
