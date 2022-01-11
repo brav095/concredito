@@ -34,7 +34,7 @@
       <v-alert v-model="alertAviso" dismissible type="warning">
         {{ mensajeAlert }}
       </v-alert>
-      <prospectos></prospectos>
+      <prospectos ref="prosp"></prospectos>
     </v-main>
   </v-app>
 </template>
@@ -66,10 +66,11 @@ export default Vue.extend({
     cancelar(): void {
       this.nuevoRegistro = false;
     },
-    guardado(): void {
+    async guardado(): Promise<void> {
       this.nuevoRegistro = false;
       this.mensajeAlert = "Registro guardado correctamente";
       this.alertCorrecto = true;
+      await this.$refs.prosp.loading();
     },
   },
 });

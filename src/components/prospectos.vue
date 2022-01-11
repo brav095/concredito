@@ -1,6 +1,5 @@
 <template>
   <div>
-    
     <v-card>
       <v-card-title>
         <v-text-field
@@ -51,12 +50,12 @@ import Vue from "vue";
 import { ProspectoR } from "../Models/prospectoResponse";
 import { WS } from "../services/wsConcredito";
 import detalleProspecto from "./detalleProspecto.vue";
+
 export default Vue.extend({
   components: {
     detalleProspecto,
   },
   name: "Prospectos",
-
   data: () => ({
     mostrarDetalle: false as boolean,
     load: false as boolean,
@@ -90,12 +89,15 @@ export default Vue.extend({
       this.mostrarDetalle = true;
       this.prospectoSelect = row;
     },
+    async loading(): Promise<void> {
+      this.load = true;
+      const repo = new WS();
+      this.prospectos = await repo.consProspectos();
+      this.load = false;
+    },
   },
   async mounted() {
-    this.load = true;
-    const repo = new WS();
-    this.prospectos = await repo.consProspectos();
-    this.load = false;
+    await this.loading();
   },
 });
 </script>
