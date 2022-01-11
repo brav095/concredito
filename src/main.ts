@@ -6,6 +6,8 @@ import VueAxios from 'vue-axios'
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
+import Vuelidate from 'vuelidate'
+Vue.use(Vuelidate)
 new Vue({
   vuetify,
   render: h => h(App)
