@@ -4,7 +4,7 @@
       <v-card>
         <v-card-title> Nuevo prospecto </v-card-title>
 
-        <v-form v-model="valido">
+        <v-form v-model="valid">
           <div style="padding-left: 40px; padding-right: 40px">
             <v-row>
               <v-col cols="12" sm="6" md="6">
@@ -74,7 +74,7 @@
             <v-row>
               <v-col cols="12" md="6" sm="6">
                 <v-text-field
-                  v-model.number="frmProspecto.telefono"
+                  v-model="frmProspecto.telefono"
                   :counter="10"
                   label="Teléfono"
                   required
@@ -105,7 +105,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="primary" text @click="cancelar()"> Cancelar</v-btn>
-          <v-btn color="primary" text @click="guardar()"> Enviar </v-btn>
+          <v-btn color="primary" :disabled="!valid" text @click="guardar()"> Enviar </v-btn>
         </v-card-actions>
       </v-card>
       <v-row justify="center">
@@ -133,11 +133,12 @@
 import Vue from "vue";
 import { ProspectoN } from "../Models/prospectoNuevo";
 import { WS } from "../services/wsConcredito";
+import {Response} from "../viewModels/respuesta";
 
 export default Vue.extend({
   name: "Registro",
   data: () => ({
-    valido: false as boolean,
+    valid: true as boolean,
     mostrar: true as boolean,
     dialog: false as boolean,
     frmProspecto: {
@@ -148,7 +149,7 @@ export default Vue.extend({
       numero: null,
       colonia: "",
       cp: "",
-      telefono: "",
+      telefono:"",
       rfc: "",
     } as ProspectoN,
     nombreVal: [
@@ -177,11 +178,11 @@ export default Vue.extend({
     ] as Array<unknown>,
     telefonoVal: [
       (v) => !!v || "Teléfono es requerido",
-      (v) => v.length == 10 || "ingresa teléfono a 10 digitos",
+      (v) => v.length == 10 || "Ingresa teléfono a 10 digitos",
     ] as Array<unknown>,
     rfcVal: [
       (v) => !!v || "RFC es requerido",
-      (v) => v.length == 13 || "ingresa RFC completo",
+      (v) => v.length == 13 || "Ingresa RFC válido",
     ] as Array<unknown>,
   }),
   methods: {
@@ -195,8 +196,9 @@ export default Vue.extend({
     async guardar(): Promise<void> {
       const repo = new WS();
       const response = await repo.newProspecto(this.frmProspecto);
-      console.log(response);
-      if (response.exito == 1) {
+      let res = response as Response;
+      // console.log(JSON.parse( response));
+      if (res.exito == 1) {
         this.$emit("cerrar");
       }
     },
