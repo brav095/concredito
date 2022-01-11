@@ -19,7 +19,7 @@
             <v-row>
               <v-col cols="12" md="6" sm="6">
                 <v-text-field
-                  v-model="frmProspecto.apellidoP"
+                  v-model.trim="frmProspecto.apellidoP"
                   label="Apellido Paterno"
                   required
                   :rules="apellidoPVal"
@@ -153,15 +153,15 @@ export default Vue.extend({
     } as ProspectoN,
     nombreVal: [
       (v) => !!v || "Nombre es requerido",
-      (v) => v.length > 4 || "Minimo 4 caracteres",
+      (v) => v.length > 3 || "Minimo 4 caracteres",
     ] as Array<unknown>,
     apellidoPVal: [
       (v) => !!v || "Apellido Paterno es requerido",
-      (v) => v.length > 4 || "Minimo 4 caracteres",
+      (v) => v.trim().length > 3 || "Minimo 4 caracteres",
     ] as Array<unknown>,
     calleVal: [
       (v) => !!v || "Calle es requerido",
-      (v) => v.length > 4 || "Minimo 4 caracteres",
+      (v) => v.length > 3 || "Minimo 4 caracteres",
     ] as Array<unknown>,
     numeroVal: [
       (v) => !!v || "Numero es requerido",
@@ -169,7 +169,7 @@ export default Vue.extend({
     ] as Array<unknown>,
     coloniaVal: [
       (v) => !!v || "Colonia es requerido",
-      (v) => v.length > 4 || "Minimo 4 caracteres",
+      (v) => v.length > 3 || "Minimo 4 caracteres",
     ] as Array<unknown>,
     cpVal: [
       (v) => !!v || "Código postal es requerido",
@@ -177,11 +177,11 @@ export default Vue.extend({
     ] as Array<unknown>,
     telefonoVal: [
       (v) => !!v || "Teléfono es requerido",
-      (v) => v.length != 10 || "ingresa teléfono a 10 digitos",
+      (v) => v.length == 10 || "ingresa teléfono a 10 digitos",
     ] as Array<unknown>,
     rfcVal: [
       (v) => !!v || "RFC es requerido",
-      (v) => v.length != 10 || "ingresa RFC completo",
+      (v) => v.length == 13 || "ingresa RFC completo",
     ] as Array<unknown>,
   }),
   methods: {
