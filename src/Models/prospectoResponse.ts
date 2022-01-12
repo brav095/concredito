@@ -9,7 +9,7 @@ export interface ProspectoR{
     cp:string,
     telefono:number,
     rfc:string,
-    rutaDocumentos:string,
     estado:number,
+    observacion:string
 }
 

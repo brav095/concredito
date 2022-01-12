@@ -93,10 +93,32 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12">
-                <v-file-input multiple truncate-length="15"
-                  >Documentos</v-file-input
-                >
+              <v-col>
+                <v-toolbar elevation="0">
+                  <v-toolbar-title>Documentos</v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-btn @click="addArchivo()" icon>
+                    <i class="fas fa-plus"></i>
+                  </v-btn>
+                </v-toolbar>
+              </v-col>
+            </v-row>
+            <v-row v-for="(archivo, index) in archivos" :key="index">
+              <v-col cols="6">
+                <v-text-field
+                  label="Nombre del archivo"
+                  required
+                  counters="13"
+                  v-model="archivo.nombre"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-file-input
+                  v-model="archivo.arch"
+                  truncate-length="15"
+                  chips
+                  label="Selecciona el archivo"
+                ></v-file-input>
               </v-col>
             </v-row>
           </div>
@@ -148,6 +170,7 @@ export default Vue.extend({
     dialog: false as boolean,
     alertError: false as boolean,
     mensajeAlert: "" as string,
+    archivos: [] as Array<unknown>,
     frmProspecto: {
       nombre: "",
       apellidoM: "",
@@ -203,7 +226,6 @@ export default Vue.extend({
     async guardar(): Promise<void> {
       const repo = new WS();
       const response = await repo.newProspecto(this.frmProspecto);
-      console.log(response);
       let res = JSON.parse(response) as Response;
       // console.log(JSON.parse( response));
       if (res.exito == 1) {
@@ -218,6 +240,9 @@ export default Vue.extend({
     },
     cerrar(): void {
       this.$emit("cancelar");
+    },
+    addArchivo(): void {
+      this.archivos.unshift({ nombre: "" as string, arch: null as unknown});
     },
   },
   computed: {

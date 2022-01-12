@@ -6,18 +6,42 @@
       hide-overlay
       transition="dialog-bottom-transition"
     >
+      <v-sheet
+        style=" position: absolute; height: 100vw"
+        class="pa-3"
+      >
+        <v-skeleton-loader
+          class="mx-auto"
+        style="z-index: 5; position: absolute; height: 100vw"
+          type="card"
+        ></v-skeleton-loader>
+      </v-sheet>
+      <!-- <v-skeleton-loader
+        class="mx-auto"
+        style="z-index: 5; position: absolute; height: 100vw"
+        type="card"
+      ></v-skeleton-loader> -->
       <v-card tile>
-        <v-toolbar flat dark>
+        <v-toolbar flat dark color="teal">
           <v-btn icon dark @click="cancelar()">
             <i class="fas fa-times fa-2x"></i>
           </v-btn>
-          <v-toolbar-title>{{ frmProspecto.nombre.toUpperCase() }}</v-toolbar-title>
+          <v-toolbar-title>{{
+            frmProspecto.nombre.toUpperCase()
+          }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-            <v-btn dark text @click="dialog = false"> Guardar </v-btn>
+            <v-alert v-model="alertError" dismissible type="error">
+              {{ mensajeAlert }}
+            </v-alert>
+            <v-alert v-model="alertCorrecto" dismissible type="success">
+              {{ mensajeAlert }}
+            </v-alert>
+            <v-btn dark text @click="autorizar()"> Autorizar </v-btn>
+            <v-btn dark text @click="dialog = true"> Rechazar </v-btn>
           </v-toolbar-items>
         </v-toolbar>
-        <v-form>
+        <v-form readonly>
           <div
             style="padding-left: 1.5vw; padding-right: 1.5vw padding-top: 100px"
           >
@@ -108,6 +132,17 @@
                 ></v-text-field>
               </v-col>
             </v-row>
+            <v-row>
+              <v-col cols="12">
+                <v-textarea
+                  v-model="frmProspecto.observacion"
+                  auto-grow
+                  filled
+                  label="Observaciones"
+                  rows="4"
+                ></v-textarea>
+              </v-col>
+            </v-row>
             <br />
             <v-divider></v-divider>
             <br />
@@ -116,7 +151,7 @@
                 <v-toolbar elevation="0">
                   <v-toolbar-title>Documentos</v-toolbar-title>
                   <v-spacer></v-spacer>
-                  <v-btn @click="addArchivo()" icon>
+                  <v-btn disabled @click="addArchivo()" icon>
                     <i class="fas fa-plus"></i>
                   </v-btn>
                 </v-toolbar>
@@ -142,6 +177,37 @@
             </v-row>
           </div>
         </v-form>
+        <v-row justify="center">
+          <v-dialog v-model="dialog" persistent max-width="290">
+            <v-card>
+              <v-card-title class="text-h5"> Rechazar </v-card-title>
+              <v-card-text>
+                Ingresa las observaciones
+                <v-textarea
+                  v-model="observacion"
+                  auto-grow
+                  filled
+                  label="Observaciones"
+                  rows="4"
+                ></v-textarea>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="dark darken-1" text @click="dialog = false">
+                  Cancelar
+                </v-btn>
+                <v-btn
+                  color="dark darken-1"
+                  :disabled="!obs"
+                  text
+                  @click="rechazar()"
+                >
+                  Guardar
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-row>
       </v-card>
     </v-dialog>
   </div>
@@ -150,6 +216,9 @@
 <script lang="ts">
 import Vue from "vue";
 import { ProspectoR } from "../Models/prospectoResponse";
+import { WS } from "../services/wsConcredito";
+import { Response } from "../viewModels/respuesta";
+import actProspecto from "../viewModels/actProspecto";
 export default Vue.extend({
   name: "detalle",
   props: {
@@ -163,13 +232,18 @@ export default Vue.extend({
     },
   },
   data: () => ({
+    dialog: false as boolean,
     mostra: true as boolean,
     archivos: [] as Array<unknown>,
+    alertError: false as boolean,
+    alertCorrecto: false as boolean,
+    mensajeAlert: "" as string,
     estados: [
       { value: 1, label: "Enviado" },
       { value: 2, label: "Aceptado" },
       { value: 3, label: "Rechazado" },
     ] as Array<unknown>,
+    observacion: "" as string,
     frmProspecto: {
       idProspecto: 0,
       nombre: "",
@@ -178,11 +252,11 @@ export default Vue.extend({
       calle: "",
       numero: 0,
       colonia: "",
-      cp: '',
+      cp: "",
       telefono: 0,
       rfc: "",
-      rutaDocumentos: "",
       estado: 1,
+      observacion: "",
     } as ProspectoR,
   }),
   mounted() {
@@ -196,8 +270,51 @@ export default Vue.extend({
       console.log(this.frmProspecto);
     },
     addArchivo(): void {
-      this.archivos.unshift({ nombre: "" as string, arch: null as unknown});
-      console.log(this.archivos);
+      this.archivos.unshift({ nombre: "" as string, arch: null as unknown });
+    },
+    async autorizar(): Promise<void> {
+      const repo = new WS();
+
+      let data = {} as actProspecto;
+      data.estado = 2;
+      data.idProspecto = this.frmProspecto.idProspecto;
+      data.observacion = this.observacion;
+
+      const response = await repo.actProspecto(data);
+      let res = JSON.parse(response) as Response;
+      // console.log(JSON.parse( response));
+      if (res.exito == 1) {
+        this.$emit("actualizado");
+        this.frmProspecto.estado = 2;
+      } else if (res.exito == 0) {
+        let error = "Error al actualizar el registro";
+        this.mensajeAlert = error;
+        this.alertError = true;
+      }
+    },
+    async rechazar(): Promise<void> {
+      const repo = new WS();
+
+      let data = {} as actProspecto;
+      data.estado = 3;
+      data.idProspecto = this.frmProspecto.idProspecto;
+      data.observacion = this.observacion;
+
+      const response = await repo.actProspecto(data);
+      let res = JSON.parse(response) as Response;
+      // console.log(JSON.parse( response));
+      if (res.exito == 1) {
+        this.frmProspecto.estado = 3;
+      } else if (res.exito == 0) {
+        let error = "Error al actualizar el registro";
+        this.mensajeAlert = error;
+        this.alertError = true;
+      }
+    },
+  },
+  computed: {
+    obs() {
+      return this.observacion.length > 10 ? true : false;
     },
   },
 });
