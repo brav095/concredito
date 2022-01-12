@@ -24,6 +24,7 @@
         v-if="nuevoRegistro"
         @cancelar="cancelar()"
         @cerrar="guardado()"
+        @error="error"
       ></Registro>
       <v-alert v-model="alertCorrecto" dismissible type="success">{{
         mensajeAlert
@@ -65,6 +66,10 @@ export default Vue.extend({
     },
     cancelar(): void {
       this.nuevoRegistro = false;
+    },
+    error(data="" as string): void {
+      this.mensajeAlert=data;
+      this.alertError=true;
     },
     async guardado(): Promise<void> {
       this.nuevoRegistro = false;

@@ -103,9 +103,14 @@
         </v-form>
 
         <v-card-actions>
+          <v-alert v-model="alertError" dismissible type="error">
+            {{ mensajeAlert }}
+          </v-alert>
           <v-spacer></v-spacer>
           <v-btn color="primary" text @click="cancelar()"> Cancelar</v-btn>
-          <v-btn color="primary" :disabled="!valid" text @click="guardar()"> Enviar </v-btn>
+          <v-btn color="primary" :disabled="!valid" text @click="guardar()">
+            Enviar
+          </v-btn>
         </v-card-actions>
       </v-card>
       <v-row justify="center">
@@ -133,7 +138,7 @@
 import Vue from "vue";
 import { ProspectoN } from "../Models/prospectoNuevo";
 import { WS } from "../services/wsConcredito";
-import {Response} from "../viewModels/respuesta";
+import { Response } from "../viewModels/respuesta";
 
 export default Vue.extend({
   name: "Registro",
@@ -141,6 +146,8 @@ export default Vue.extend({
     valid: true as boolean,
     mostrar: true as boolean,
     dialog: false as boolean,
+    alertError: false as boolean,
+    mensajeAlert: "" as string,
     frmProspecto: {
       nombre: "",
       apellidoM: "",
@@ -149,7 +156,7 @@ export default Vue.extend({
       numero: null,
       colonia: "",
       cp: "",
-      telefono:"",
+      telefono: "",
       rfc: "",
     } as ProspectoN,
     nombreVal: [
@@ -201,6 +208,12 @@ export default Vue.extend({
       // console.log(JSON.parse( response));
       if (res.exito == 1) {
         this.$emit("cerrar");
+      } else if (res.exito == 0) {
+        let error = res.mensaje.includes("rfc")
+          ? "RFC duplicado"
+          : ("Error al guardar el registro" as string);
+        this.mensajeAlert = error;
+        this.alertError = true;
       }
     },
     cerrar(): void {
