@@ -1,5 +1,6 @@
 <template>
   <div>
+    <loading v-if="carga"></loading>
     <v-dialog v-model="mostrar" :persistent="true">
       <v-card>
         <v-card-title> Nuevo prospecto </v-card-title>
@@ -125,10 +126,12 @@
         </v-form>
 
         <v-card-actions>
-          <v-alert v-model="alertError" dismissible type="error">
+          <v-spacer></v-spacer>
+          <v-row>
+            <v-alert v-model="alertError" dismissible type="error">
             {{ mensajeAlert }}
           </v-alert>
-          <v-spacer></v-spacer>
+          </v-row>
           <v-btn color="primary" text @click="cancelar()"> Cancelar</v-btn>
           <v-btn color="primary" :disabled="!valid" text @click="guardar()">
             Enviar
@@ -161,6 +164,7 @@ import Vue from "vue";
 import { ProspectoN } from "../Models/prospectoNuevo";
 import { WS } from "../services/wsConcredito";
 import { Response } from "../viewModels/respuesta";
+import loading from "./loading.vue"
 
 export default Vue.extend({
   name: "Registro",
@@ -170,6 +174,7 @@ export default Vue.extend({
     dialog: false as boolean,
     alertError: false as boolean,
     mensajeAlert: "" as string,
+    carga: false as boolean,
     archivos: [] as Array<unknown>,
     frmProspecto: {
       nombre: "",
@@ -224,6 +229,8 @@ export default Vue.extend({
       }
     },
     async guardar(): Promise<void> {
+      this.carga= true;
+
       const repo = new WS();
       const response = await repo.newProspecto(this.frmProspecto);
       let res = JSON.parse(response) as Response;
@@ -237,6 +244,8 @@ export default Vue.extend({
         this.mensajeAlert = error;
         this.alertError = true;
       }
+      this.carga= false;
+
     },
     cerrar(): void {
       this.$emit("cancelar");
@@ -268,6 +277,9 @@ export default Vue.extend({
         : false;
     },
   },
+  components:{
+    loading,
+  }
 });
 </script>
 

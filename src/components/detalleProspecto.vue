@@ -6,16 +6,13 @@
       hide-overlay
       transition="dialog-bottom-transition"
     >
-      <v-sheet
-        style=" position: absolute; height: 100vw"
-        class="pa-3"
-      >
-        <v-skeleton-loader
-          class="mx-auto"
+      <loading v-if="carga"></loading>
+
+      <!-- <v-skeleton-loader
+        class="mx-auto"
         style="z-index: 5; position: absolute; height: 100vw"
-          type="card"
-        ></v-skeleton-loader>
-      </v-sheet>
+        type="card"
+      ></v-skeleton-loader> -->
       <!-- <v-skeleton-loader
         class="mx-auto"
         style="z-index: 5; position: absolute; height: 100vw"
@@ -219,6 +216,9 @@ import { ProspectoR } from "../Models/prospectoResponse";
 import { WS } from "../services/wsConcredito";
 import { Response } from "../viewModels/respuesta";
 import actProspecto from "../viewModels/actProspecto";
+import loading from "./loading.vue";
+
+
 export default Vue.extend({
   name: "detalle",
   props: {
@@ -238,6 +238,7 @@ export default Vue.extend({
     alertError: false as boolean,
     alertCorrecto: false as boolean,
     mensajeAlert: "" as string,
+    carga: false as boolean,
     estados: [
       { value: 1, label: "Enviado" },
       { value: 2, label: "Aceptado" },
@@ -260,7 +261,7 @@ export default Vue.extend({
     } as ProspectoR,
   }),
   mounted() {
-    this.frmProspecto = JSON.parse(JSON.stringify(this.prospecto));
+    this.frmProspecto = this.prospecto;
   },
   methods: {
     cancelar(): void {
@@ -274,7 +275,7 @@ export default Vue.extend({
     },
     async autorizar(): Promise<void> {
       const repo = new WS();
-
+      this.carga = true;
       let data = {} as actProspecto;
       data.estado = 2;
       data.idProspecto = this.frmProspecto.idProspecto;
@@ -284,16 +285,19 @@ export default Vue.extend({
       let res = JSON.parse(response) as Response;
       // console.log(JSON.parse( response));
       if (res.exito == 1) {
-        this.$emit("actualizado");
+        this.mensajeAlert = "Se actualizó correctamente";
+        this.alertCorrecto = true;
         this.frmProspecto.estado = 2;
       } else if (res.exito == 0) {
-        let error = "Error al actualizar el registro";
-        this.mensajeAlert = error;
+        this.mensajeAlert = "Error al actualizar el registro";
         this.alertError = true;
       }
+      this.carga = false;
     },
     async rechazar(): Promise<void> {
+      this.dialog = false;
       const repo = new WS();
+      this.carga = true;
 
       let data = {} as actProspecto;
       data.estado = 3;
@@ -305,11 +309,14 @@ export default Vue.extend({
       // console.log(JSON.parse( response));
       if (res.exito == 1) {
         this.frmProspecto.estado = 3;
+        this.mensajeAlert = "Se actualizó correctamente";
+        this.alertCorrecto = true;
+        this.frmProspecto.observacion = this.observacion;
       } else if (res.exito == 0) {
-        let error = "Error al actualizar el registro";
-        this.mensajeAlert = error;
+        this.mensajeAlert = "Error al actualizar el registro";
         this.alertError = true;
       }
+      this.carga = false;
     },
   },
   computed: {
@@ -317,7 +324,27 @@ export default Vue.extend({
       return this.observacion.length > 10 ? true : false;
     },
   },
+  components:{
+    loading,
+  }
 });
 </script>
 
-<style></style>
+<style scoped>
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: 0.1s ease;
+  z-index: -1;
+  background: #000;
+}
+
+.overlay.activeb {
+  opacity: 0.5;
+  z-index: 6;
+}
+</style>

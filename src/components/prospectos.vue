@@ -1,5 +1,6 @@
 <template>
   <div>
+    <loading v-if="carga"></loading>
     <v-card>
       <v-card-title>
         <v-text-field
@@ -50,15 +51,18 @@ import Vue from "vue";
 import { ProspectoR } from "../Models/prospectoResponse";
 import { WS } from "../services/wsConcredito";
 import detalleProspecto from "./detalleProspecto.vue";
+import loading from "./loading.vue"
 
 export default Vue.extend({
   components: {
     detalleProspecto,
+    loading,
   },
   name: "Prospectos",
   data: () => ({
     mostrarDetalle: false as boolean,
     load: false as boolean,
+    carga: false as boolean,
     search: "" as string,
     Titulos: [
       {
@@ -90,10 +94,12 @@ export default Vue.extend({
       this.prospectoSelect = row;
     },
     async loading(): Promise<void> {
+      this.carga= true;
       this.load = true;
       const repo = new WS();
       this.prospectos = await repo.consProspectos();
       this.load = false;
+      this.carga= false;
     },
   },
   async mounted() {

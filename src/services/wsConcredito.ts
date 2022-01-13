@@ -3,7 +3,7 @@ import { ProspectoN } from "@/Models/prospectoNuevo";
 import actProspecto from "@/viewModels/actProspecto";
 
 export class WS {
- // base_url = "http://localhost:5000/Prospectos";
+  // base_url = "http://localhost:5000/Prospectos";
   base_url= "https://wsconcredito.azurewebsites.net/Prospectos";
   constructor() {
     // console.log("Servicio");
