@@ -56,18 +56,19 @@ export class WS {
       return response;
   }
   async upArchivos(uArch:archivoreq): Promise<void> {
-    let myHeaders = new Headers();
+    const myHeaders = new Headers();
     myHeaders.append("Content-Type", "multipart/form-data");
-    let formD = new FormData();
+    const formD = new FormData();
     formD.append("Nombre",uArch.nombre);
     formD.append("Archivoimp",uArch.archivoimp);
     formD.append("Rfc",uArch.rfc);
     console.log(formD);
+    console.log(JSON.stringify(uArch));
     const response = await fetch(this.base_url+"/archivos", {
       method: "POST",
       headers: myHeaders,
-      // body: JSON.stringify(uArch),
-      body: formD,
+      body: JSON.stringify(uArch),
+      // body: formD,
       redirect: "follow",
     })
       .then((response) => response.text())
