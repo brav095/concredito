@@ -135,7 +135,7 @@
             </v-alert>
           </v-row>
           <v-btn color="primary" text @click="cancelar()"> Cancelar</v-btn>
-          <v-btn color="primary" :disabled="valid" text @click="guardar()">
+          <v-btn color="primary" :disabled="!valid" text @click="guardar()">
             Enviar
           </v-btn>
         </v-card-actions>
