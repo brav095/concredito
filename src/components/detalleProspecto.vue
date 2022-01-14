@@ -17,7 +17,6 @@
           }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-            
             <v-btn dark text @click="autorizar()"> Autorizar </v-btn>
             <v-btn dark text @click="dialog = true"> Rechazar </v-btn>
           </v-toolbar-items>
@@ -26,14 +25,14 @@
           <div
             style="padding-left: 1.5vw; padding-right: 1.5vw padding-top: 100px"
           >
-          <v-row>
-            <v-alert v-model="alertError" dismissible type="error">
-              {{ mensajeAlert }}
-            </v-alert>
-            <v-alert v-model="alertCorrecto" dismissible type="success">
-              {{ mensajeAlert }}
-            </v-alert>
-          </v-row>
+            <v-row>
+              <v-alert v-model="alertError" dismissible type="error">
+                {{ mensajeAlert }}
+              </v-alert>
+              <v-alert v-model="alertCorrecto" dismissible type="success">
+                {{ mensajeAlert }}
+              </v-alert>
+            </v-row>
             <v-row>
               <v-col cols="12" sm="6" md="6">
                 <v-text-field
@@ -121,8 +120,8 @@
                 ></v-text-field>
               </v-col>
             </v-row>
-            <v-row v-if="frmProspecto.estado==3">
-              <v-col cols="12" >
+            <v-row v-if="frmProspecto.estado == 3">
+              <v-col cols="12">
                 <v-textarea
                   v-model="frmProspecto.observacion"
                   auto-grow
@@ -146,23 +145,35 @@
                 </v-toolbar>
               </v-col>
             </v-row>
-            <v-row v-for="(index) in archivos" :key="index">
-              <v-col cols="6">
+            <v-row
+              v-for="(archivo, index) in frmProspecto.archivos"
+              :key="index"
+            >
+              <v-col cols="12">
                 <v-text-field
                   label="Nombre del archivo"
                   required
+                  readonly
                   counters="13"
-                  v-model="archivos[index].nombre"
-                ></v-text-field>
+                  :value="archivo.nombre"
+                  @click="descargar(archivo.idArchivo)"
+                >
+                  <template v-slot:append>
+                    <v-fade-transition leave-absolute>
+                      <i class="fas fa-cloud-download-alt"></i>
+                    </v-fade-transition>
+                  </template>
+                </v-text-field>
               </v-col>
-              <v-col cols="6">
+              <!-- <v-col cols="6">
                 <v-file-input
-                  v-model="archivos[index].arch"
+                  v-model="archivo.nombre"
                   truncate-length="15"
                   chips
                   label="Selecciona el archivo"
+                  readonly
                 ></v-file-input>
-              </v-col>
+              </v-col> -->
             </v-row>
           </div>
         </v-form>
@@ -210,7 +221,6 @@ import { Response } from "../viewModels/respuesta";
 import actProspecto from "../viewModels/actProspecto";
 import loading from "./loading.vue";
 
-
 export default Vue.extend({
   name: "detalle",
   props: {
@@ -250,9 +260,11 @@ export default Vue.extend({
       rfc: "",
       estado: 1,
       observacion: "",
+      archivos: null,
     } as ProspectoR,
   }),
   mounted() {
+    console.log(this.prospecto);
     this.frmProspecto = this.prospecto;
   },
   methods: {
@@ -310,15 +322,19 @@ export default Vue.extend({
       }
       this.carga = false;
     },
+    descargar(id: string) {
+      const repo = new WS();
+      repo.download(id);
+    },
   },
   computed: {
     obs() {
       return this.observacion.length > 10 ? true : false;
     },
   },
-  components:{
+  components: {
     loading,
-  }
+  },
 });
 </script>
 

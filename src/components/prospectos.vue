@@ -98,6 +98,7 @@ export default Vue.extend({
       this.load = true;
       const repo = new WS();
       this.prospectos = await repo.consProspectos();
+      console.log(this.prospectos);
       this.load = false;
       this.carga= false;
     },

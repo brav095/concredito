@@ -21,10 +21,12 @@ export class WS {
       return result;
     }
   }
+  download(id: string): void {
+    window.location.assign(this.base_url+"/archivos/"+id)
+  }
 
   async newProspecto(nPros: ProspectoN): Promise<string> {
     nPros.cp = nPros.cp.toString();
-    console.log(nPros);
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
  
@@ -38,7 +40,6 @@ export class WS {
       .then((result) => result)
       .catch((error) => error);
       return response;
-    // return"";
   }
   async actProspecto(uPros:actProspecto): Promise<string> {
     const myHeaders = new Headers();
@@ -63,8 +64,8 @@ export class WS {
     formD.append("Rfc",uArch.rfc);
     formD.append("Nombre",uArch.nombre);
     formD.append("Archivoimp",uArch.archivoimp);
-    console.log(formD);
-    console.log(JSON.stringify(uArch));
+
+
     const response = await fetch(this.base_url+"/archivos", {
       method: "POST",
       headers: myHeaders,

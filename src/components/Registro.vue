@@ -116,7 +116,7 @@
               </v-col>
               <v-col cols="6">
                 <v-file-input
-                  accept=".pdf,.doc,.docx,.xlsx,.txt"
+                  accept=".pdf"
                   truncate-length="15"
                   chips
                   label="Selecciona el archivo"
@@ -135,7 +135,7 @@
             </v-alert>
           </v-row>
           <v-btn color="primary" text @click="cancelar()"> Cancelar</v-btn>
-          <v-btn color="primary" :disabled="!valid" text @click="guardar()">
+          <v-btn color="primary" :disabled="!valid || !archivosCargados" text @click="guardar()">
             Enviar
           </v-btn>
         </v-card-actions>
@@ -265,20 +265,6 @@ export default Vue.extend({
         archivoimp: null,
       });
     },
-    // cargaArchivo(e) {
-    //   let file = e.target.files[0];
-    //   console.log(e);
-    //   this.archivo.archivoimp = file
-    //   console.log(this.archivo.archivoimp);
-    //   console.log(this.archivo);
-    // },
-    adjuntar() {
-      // let reader = new FileReader();
-      // reader.onload = (e) => {
-      //   this.arch.archivoimp = e.target.result;
-      // };
-      // reader.readAsDataURL(file);
-    },
   },
   computed: {
     alertGuardar(): boolean {
@@ -301,8 +287,10 @@ export default Vue.extend({
         : this.frmProspecto.rfc.length > 0
         ? true
         : false;
-      // return true;
     },
+    archivosCargados(){
+      return this.archivos.length > 0 ? this.archivos[0].archivoimp !==null && this.archivos[0].nombre.length>0 ? true : false:false;
+    }
   },
   components: {
     loading,

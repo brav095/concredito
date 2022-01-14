@@ -10,6 +10,7 @@ export interface ProspectoR{
     telefono:number,
     rfc:string,
     estado:number,
-    observacion:string
+    observacion:string,
+    archivos:Array<unknown>
 }
 
