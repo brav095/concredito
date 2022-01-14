@@ -56,9 +56,9 @@ export class WS {
       return response;
   }
   async upArchivos(uArch:archivoreq): Promise<void> {
-    const myHeaders = new Headers();
+    let myHeaders = new Headers();
     myHeaders.append("Content-Type", "multipart/form-data");
-    const formD = new FormData();
+    let formD = new FormData();
     formD.append("Nombre",uArch.nombre);
     formD.append("Archivoimp",uArch.archivoimp);
     formD.append("Rfc",uArch.rfc);
