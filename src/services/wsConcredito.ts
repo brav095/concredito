@@ -27,6 +27,7 @@ export class WS {
 
   async newProspecto(nPros: ProspectoN): Promise<string> {
     nPros.cp = nPros.cp.toString();
+    
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
  
