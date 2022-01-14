@@ -4,8 +4,8 @@ import actProspecto from "@/viewModels/actProspecto";
 import { archivoreq } from "@/viewModels/archivoreq";
 
 export class WS {
-  // base_url = "http://localhost:5000/Prospectos";
-  base_url= "https://wsconcredito.azurewebsites.net/Prospectos";
+  base_url = "http://localhost:5000/Prospectos";
+  // base_url= "https://wsconcredito.azurewebsites.net/Prospectos";
   constructor() {
     // console.log("Servicio");
   }
@@ -57,18 +57,19 @@ export class WS {
   }
   async upArchivos(uArch:archivoreq): Promise<void> {
     const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "multipart/form-data");
-    const formD = new FormData();
+    myHeaders.append("Data-Type", "multipart/form-data");
+    let formD = new FormData();
+    formD = new FormData();
+    formD.append("Rfc",uArch.rfc);
     formD.append("Nombre",uArch.nombre);
     formD.append("Archivoimp",uArch.archivoimp);
-    formD.append("Rfc",uArch.rfc);
     console.log(formD);
     console.log(JSON.stringify(uArch));
     const response = await fetch(this.base_url+"/archivos", {
       method: "POST",
       headers: myHeaders,
-      body: JSON.stringify(uArch),
-      // body: formD,
+      // body: JSON.stringify(uArch),
+      body: formD,
       redirect: "follow",
     })
       .then((response) => response.text())
