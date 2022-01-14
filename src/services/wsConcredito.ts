@@ -1,6 +1,7 @@
 import { ProspectoR } from "@/Models/prospectoResponse";
 import { ProspectoN } from "@/Models/prospectoNuevo";
 import actProspecto from "@/viewModels/actProspecto";
+import { archivoreq } from "@/viewModels/archivoreq";
 
 export class WS {
   // base_url = "http://localhost:5000/Prospectos";
@@ -22,12 +23,11 @@ export class WS {
   }
 
   async newProspecto(nPros: ProspectoN): Promise<string> {
-    // nPros.telefono = nPros.telefono.toString();
     nPros.cp = nPros.cp.toString();
     console.log(nPros);
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-
+ 
     const response = await fetch(this.base_url, {
       method: "POST",
       headers: myHeaders,
@@ -38,12 +38,12 @@ export class WS {
       .then((result) => result)
       .catch((error) => error);
       return response;
+    // return"";
   }
   async actProspecto(uPros:actProspecto): Promise<string> {
-    console.log(uPros);
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-
+    
     const response = await fetch(this.base_url, {
       method: "PUT",
       headers: myHeaders,
@@ -54,5 +54,24 @@ export class WS {
       .then((result) => result)
       .catch((error) => error);
       return response;
+  }
+  async upArchivos(uArch:archivoreq): Promise<void> {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "multipart/form-data");
+    const formD = new FormData();
+    formD.append("Nombre",uArch.nombre);
+    formD.append("Archivoimp",uArch.archivoimp);
+    formD.append("Rfc",uArch.rfc);
+    console.log(formD);
+    const response = await fetch(this.base_url+"/archivos", {
+      method: "POST",
+      headers: myHeaders,
+      // body: JSON.stringify(uArch),
+      body: formD,
+      redirect: "follow",
+    })
+      .then((response) => response.text())
+      .then((result) => result)
+      .catch((error) => error);
   }
 }

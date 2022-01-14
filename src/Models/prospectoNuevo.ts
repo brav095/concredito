@@ -1,7 +1,8 @@
+import { archivoreq } from './../viewModels/archivoreq';
 export interface ProspectoN{
-    nombre:String,
-    apellidoM:String,
-    apellidoP:String,
+    nombre:string,
+    apellidoM:string,
+    apellidoP:string,
     calle:string,
     numero:number|unknown,
     colonia:string,

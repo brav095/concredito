@@ -90,6 +90,7 @@
                   required
                   counters="13"
                   :rules="rfcVal"
+                  :counter="13"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -115,10 +116,11 @@
               </v-col>
               <v-col cols="6">
                 <v-file-input
-                  v-model="archivo.arch"
+                  accept=".pdf,.doc,.docx,.xlsx,.txt"
                   truncate-length="15"
                   chips
                   label="Selecciona el archivo"
+                  v-model="archivo.archivoimp"
                 ></v-file-input>
               </v-col>
             </v-row>
@@ -129,11 +131,11 @@
           <v-spacer></v-spacer>
           <v-row>
             <v-alert v-model="alertError" dismissible type="error">
-            {{ mensajeAlert }}
-          </v-alert>
+              {{ mensajeAlert }}
+            </v-alert>
           </v-row>
           <v-btn color="primary" text @click="cancelar()"> Cancelar</v-btn>
-          <v-btn color="primary" :disabled="!valid" text @click="guardar()">
+          <v-btn color="primary" :disabled="valid" text @click="guardar()">
             Enviar
           </v-btn>
         </v-card-actions>
@@ -164,7 +166,8 @@ import Vue from "vue";
 import { ProspectoN } from "../Models/prospectoNuevo";
 import { WS } from "../services/wsConcredito";
 import { Response } from "../viewModels/respuesta";
-import loading from "./loading.vue"
+import loading from "./loading.vue";
+import { archivoreq } from "../viewModels/archivoreq";
 
 export default Vue.extend({
   name: "Registro",
@@ -175,7 +178,8 @@ export default Vue.extend({
     alertError: false as boolean,
     mensajeAlert: "" as string,
     carga: false as boolean,
-    archivos: [] as Array<unknown>,
+    archivos: [] as Array<archivoreq>,
+    archivo: { nombre: "", archivoimp: "" },
     frmProspecto: {
       nombre: "",
       apellidoM: "",
@@ -229,13 +233,18 @@ export default Vue.extend({
       }
     },
     async guardar(): Promise<void> {
-      this.carga= true;
-
+      this.carga = true;
+      console.log(this.archivos);
       const repo = new WS();
+
       const response = await repo.newProspecto(this.frmProspecto);
       let res = JSON.parse(response) as Response;
-      // console.log(JSON.parse( response));
+
       if (res.exito == 1) {
+        for (let i = 0; i < this.archivos.length; i++) {
+          console.log(this.archivos[i]);
+           await repo.upArchivos(this.archivos[i]);
+        }
         this.$emit("cerrar");
       } else if (res.exito == 0) {
         let error = res.mensaje.includes("rfc")
@@ -244,14 +253,31 @@ export default Vue.extend({
         this.mensajeAlert = error;
         this.alertError = true;
       }
-      this.carga= false;
-
+      this.carga = false;
     },
     cerrar(): void {
       this.$emit("cancelar");
     },
     addArchivo(): void {
-      this.archivos.unshift({ nombre: "" as string, arch: null as unknown});
+      this.archivos.unshift({
+        rfc: this.frmProspecto.rfc,
+        nombre: "",
+        archivoimp: null,
+      });
+    },
+    // cargaArchivo(e) {
+    //   let file = e.target.files[0];
+    //   console.log(e);
+    //   this.archivo.archivoimp = file
+    //   console.log(this.archivo.archivoimp);
+    //   console.log(this.archivo);
+    // },
+    adjuntar() {
+      // let reader = new FileReader();
+      // reader.onload = (e) => {
+      //   this.arch.archivoimp = e.target.result;
+      // };
+      // reader.readAsDataURL(file);
     },
   },
   computed: {
@@ -275,11 +301,12 @@ export default Vue.extend({
         : this.frmProspecto.rfc.length > 0
         ? true
         : false;
+      // return true;
     },
   },
-  components:{
+  components: {
     loading,
-  }
+  },
 });
 </script>
 

@@ -1,6 +1,6 @@
 export interface vmProspecto{
-    nombre:String,
-    apellidoMaterno:String,
-    apellidoPaterno:String,
+    nombre:string,
+    apellidoMaterno:string,
+    apellidoPaterno:string,
     estado:number
 }

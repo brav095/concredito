@@ -7,17 +7,6 @@
       transition="dialog-bottom-transition"
     >
       <loading v-if="carga"></loading>
-
-      <!-- <v-skeleton-loader
-        class="mx-auto"
-        style="z-index: 5; position: absolute; height: 100vw"
-        type="card"
-      ></v-skeleton-loader> -->
-      <!-- <v-skeleton-loader
-        class="mx-auto"
-        style="z-index: 5; position: absolute; height: 100vw"
-        type="card"
-      ></v-skeleton-loader> -->
       <v-card tile>
         <v-toolbar flat dark color="teal">
           <v-btn icon dark @click="cancelar()">
@@ -28,12 +17,7 @@
           }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-            <v-alert v-model="alertError" dismissible type="error">
-              {{ mensajeAlert }}
-            </v-alert>
-            <v-alert v-model="alertCorrecto" dismissible type="success">
-              {{ mensajeAlert }}
-            </v-alert>
+            
             <v-btn dark text @click="autorizar()"> Autorizar </v-btn>
             <v-btn dark text @click="dialog = true"> Rechazar </v-btn>
           </v-toolbar-items>
@@ -42,6 +26,14 @@
           <div
             style="padding-left: 1.5vw; padding-right: 1.5vw padding-top: 100px"
           >
+          <v-row>
+            <v-alert v-model="alertError" dismissible type="error">
+              {{ mensajeAlert }}
+            </v-alert>
+            <v-alert v-model="alertCorrecto" dismissible type="success">
+              {{ mensajeAlert }}
+            </v-alert>
+          </v-row>
             <v-row>
               <v-col cols="12" sm="6" md="6">
                 <v-text-field
@@ -129,8 +121,8 @@
                 ></v-text-field>
               </v-col>
             </v-row>
-            <v-row>
-              <v-col cols="12">
+            <v-row v-if="frmProspecto.estado==3">
+              <v-col cols="12" >
                 <v-textarea
                   v-model="frmProspecto.observacion"
                   auto-grow
@@ -154,18 +146,18 @@
                 </v-toolbar>
               </v-col>
             </v-row>
-            <v-row v-for="(archivo, index) in archivos" :key="index">
+            <v-row v-for="(index) in archivos" :key="index">
               <v-col cols="6">
                 <v-text-field
                   label="Nombre del archivo"
                   required
                   counters="13"
-                  v-model="archivo.nombre"
+                  v-model="archivos[index].nombre"
                 ></v-text-field>
               </v-col>
               <v-col cols="6">
                 <v-file-input
-                  v-model="archivo.arch"
+                  v-model="archivos[index].arch"
                   truncate-length="15"
                   chips
                   label="Selecciona el archivo"
@@ -241,7 +233,7 @@ export default Vue.extend({
     carga: false as boolean,
     estados: [
       { value: 1, label: "Enviado" },
-      { value: 2, label: "Aceptado" },
+      { value: 2, label: "Autorizado" },
       { value: 3, label: "Rechazado" },
     ] as Array<unknown>,
     observacion: "" as string,
